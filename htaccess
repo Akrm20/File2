@@ -1,0 +1,48 @@
+# .htaccess for Micro ERP Offline System
+RewriteEngine On
+
+# Service Worker يجب أن يخدم بشكل صحيح
+<Files "sw.js">
+  Header set Service-Worker-Allowed "/"
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+</Files>
+
+# Manifest يجب أن يخدم بشكل صحيح
+<Files "manifest.json">
+  Header set Content-Type "application/json"
+  Header set Cache-Control "max-age=86400"
+</Files>
+
+# HTML files - لا تخزن مؤقتاً لفترة طويلة
+<Files "*.html">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+</Files>
+
+# CSS and JS from CDN - تخزين مؤقت لفترة طويلة
+<FilesMatch "\.(css|js)$">
+  Header set Cache-Control "max-age=2592000"
+</FilesMatch>
+
+# Enable CORS for CDN resources
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
+# Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/javascript
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/json
+</IfModule>
+
+# Fallback for SPA routing
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"

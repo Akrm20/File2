@@ -1,0 +1,72 @@
+{
+  "name": "نظام الإدارة المتكامل - Micro ERP",
+  "short_name": "MicroERP",
+  "description": "نظام إدارة موارد المؤسسات المتكامل - يعمل دون اتصال بعد الترخيص",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4361ee",
+  "orientation": "any",
+  "scope": "/",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='1280' height='720' viewBox='0 0 1280 720'><rect width='1280' height='720' fill='%234361ee'/><text x='640' y='360' font-family='Arial' font-size='48' text-anchor='middle' fill='white'>نظام الإدارة المتكامل</text></svg>",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "نقطة البيع",
+      "short_name": "POS",
+      "description": "فتح نقطة البيع السريعة",
+      "url": "/index.html?module=pos",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "المخزون",
+      "short_name": "Inventory",
+      "description": "إدارة المخزون والمنتجات",
+      "url": "/index.html?module=inventory",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "لوحة المالك",
+      "short_name": "Owner",
+      "description": "لوحة تحكم المالك",
+      "url": "/owner.html",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👑</text></svg>",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // قاعدة للتحقق من أن المستخدم هو المالك
+    function isOwner() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'owner';
+    }
+    
+    // قاعدة للتحقق من أن المستخدم مسجل
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // قاعدة للتحقق من أن المستخدم يصل لبياناته فقط
+    function isUser(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // مجموعة المستخدمين
+    match /users/{userId} {
+      allow read, write: if isAuthenticated() && (isUser(userId) || isOwner());
+      allow create: if isAuthenticated();
+    }
+    
+    // مجموعة الإشعارات
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() && (isUser(resource.data.userId) || isOwner());
+      allow write: if isOwner();
+    }
+    
+    // السماح للمالك بالوصول الكامل لجميع المجموعات
+    match /{document=**} {
+      allow read, write: if isOwner();
+    }
+  }
+}

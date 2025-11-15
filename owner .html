@@ -1,0 +1,1613 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👑 لوحة تحكم المالك - Micro-ERP</title>
+    
+    <!-- روابط CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- إعدادات PWA -->
+    <meta name="theme-color" content="#198754"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ERP Owner">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- أيقونات PWA -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --sidebar-width: 250px;
+            --header-height: 60px;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #0dcaf0;
+            --light: #f8f9fa;
+            --dark: #212529;
+        }
+
+        [data-bs-theme="light"] {
+            --bs-body-bg: #f8f9fa;
+            --bs-body-color: #212529;
+            --card-bg: #ffffff;
+            --sidebar-bg: #ffffff;
+            --sidebar-link-hover: #e9ecef;
+        }
+
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #121212;
+            --bs-body-color: #e0e0e0;
+            --card-bg: #1e1e1e;
+            --sidebar-bg: #1e1e1e;
+            --sidebar-link-hover: #2c2c2c;
+            --bs-card-bg: var(--card-bg);
+            --bs-card-color: var(--bs-body-color);
+        }
+
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            transition: background-color 0.3s;
+            border: 1px solid var(--sidebar-link-hover);
+        }
+
+        .kpi-card {
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+
+        .subscription-active {
+            background-color: rgba(40, 167, 69, 0.1) !important;
+        }
+
+        .subscription-warning {
+            background-color: rgba(255, 193, 7, 0.1) !important;
+        }
+
+        .subscription-expired {
+            background-color: rgba(220, 53, 69, 0.1) !important;
+        }
+
+        .plan-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .plan-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .plan-card.popular {
+            border-color: var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card.popular::before {
+            content: "الأكثر شيوعاً";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list .bi-check-lg {
+            color: var(--success);
+        }
+
+        .feature-list .bi-x-lg {
+            color: var(--danger);
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background-color: var(--card-bg);
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .table th {
+            border-top: none;
+        }
+
+        .badge-subscription {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        .status-active {
+            background-color: var(--success);
+        }
+
+        .status-warning {
+            background-color: var(--warning);
+        }
+
+        .status-expired {
+            background-color: var(--danger);
+        }
+
+        .status-inactive {
+            background-color: var(--secondary-color);
+        }
+
+        .header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--sidebar-link-hover);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginScreen" class="container">
+        <div class="login-container">
+            <div class="text-center mb-4">
+                <h1 class="h3">👑 دخول المالك</h1>
+                <p class="text-muted">لوحة تحكم نظام Micro-ERP</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="loginEmail" class="form-label">البريد الإلكتروني</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="mb-3">
+                    <label for="loginPassword" class="form-label">كلمة المرور</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mb-3">تسجيل الدخول</button>
+                <div class="text-center">
+                    <a href="index.html" class="btn btn-outline-secondary btn-sm">العودة للنظام الرئيسي</a>
+                </div>
+            </form>
+            
+            <div id="loginMessage" class="alert alert-danger mt-3" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- لوحة تحكم المالك -->
+    <div id="ownerDashboard" class="d-none">
+        <!-- الشريط العلوي -->
+        <div class="header">
+            <div class="dashboard-container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0">👑 لوحة تحكم المالك</h1>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <span id="userDisplayName" class="fw-bold"></span>
+                        <div class="user-avatar" id="userAvatar"></div>
+                        <button class="btn btn-outline-secondary btn-sm" id="themeToggle">
+                            <i class="bi bi-sun" id="themeIcon"></i>
+                        </button>
+                        <button class="btn btn-outline-primary btn-sm" id="refreshSubscriptionsBtn">
+                            <i class="bi bi-arrow-clockwise"></i> تحديث
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" id="logoutBtn">
+                            <i class="bi bi-box-arrow-left"></i> خروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="dashboard-container">
+            <!-- بطاقات الإحصائيات -->
+            <div class="row mb-4">
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card kpi-card bg-primary text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-people fs-1"></i>
+                            <div class="kpi-value" id="totalUsers">0</div>
+                            <div class="kpi-title">إجمالي العملاء</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card kpi-card bg-success text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-check-circle fs-1"></i>
+                            <div class="kpi-value" id="activeSubscriptions">0</div>
+                            <div class="kpi-title">اشتراكات نشطة</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card kpi-card bg-warning text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-exclamation-triangle fs-1"></i>
+                            <div class="kpi-value" id="expiringSubscriptions">0</div>
+                            <div class="kpi-title">تنتهي قريباً</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 mb-3">
+                    <div class="card kpi-card bg-info text-white">
+                        <div class="card-body text-center">
+                            <i class="bi bi-cash-coin fs-1"></i>
+                            <div class="kpi-value" id="totalRevenue">0.00 ر.ي</div>
+                            <div class="kpi-title">إجمالي الإيرادات</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- خطط الاشتراك المتاحة -->
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="card-title mb-0">📋 خطط الاشتراك المتاحة</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="subscriptionPlansContainer">
+                                <!-- سيتم تعبئتها ديناميكياً -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إدارة العملاء -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                            <h5 class="card-title mb-0">👥 إدارة العملاء والاشتراكات</h5>
+                            <div>
+                                <button class="btn btn-light btn-sm me-2" id="exportUsersBtn">
+                                    <i class="bi bi-cloud-download"></i> تصدير
+                                </button>
+                                <button class="btn btn-light btn-sm" id="addUserBtn">
+                                    <i class="bi bi-plus-circle"></i> إضافة عميل جديد
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>الاسم</th>
+                                            <th>البريد الإلكتروني</th>
+                                            <th>خطة الاشتراك</th>
+                                            <th>تاريخ التسجيل</th>
+                                            <th>حالة الاشتراك</th>
+                                            <th>ينتهي في</th>
+                                            <th>المتبقي</th>
+                                            <th>إجراءات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <tr>
+                                            <td colspan="8" class="text-center text-muted">جاري تحميل بيانات العملاء...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نموذج إضافة/تعديل عميل -->
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userModalLabel">إضافة عميل جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="userForm">
+                        <input type="hidden" id="userId">
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="userFullName" class="form-label">الاسم الكامل</label>
+                                <input type="text" class="form-control" id="userFullName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userEmail" class="form-label">البريد الإلكتروني</label>
+                                <input type="email" class="form-control" id="userEmail" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="userPassword" class="form-label">كلمة المرور</label>
+                                <input type="password" class="form-control" id="userPassword">
+                                <small class="form-text text-muted">اتركه فارغاً للحفاظ على كلمة المرور الحالية</small>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userSubscriptionPlan" class="form-label">خطة الاشتراك</label>
+                                <select class="form-select" id="userSubscriptionPlan" required>
+                                    <option value="">اختر خطة الاشتراك</option>
+                                    <option value="trial">تجريبي</option>
+                                    <option value="basic">أساسي</option>
+                                    <option value="professional">محترف</option>
+                                    <option value="enterprise">متقدم</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="userSubscriptionStatus" class="form-label">حالة الاشتراك</label>
+                                <select class="form-select" id="userSubscriptionStatus" required>
+                                    <option value="active">نشط</option>
+                                    <option value="inactive">غير نشط</option>
+                                    <option value="expired">منتهي</option>
+                                    <option value="suspended">موقوف</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="userSubscriptionDuration" class="form-label">مدة الاشتراك (أيام)</label>
+                                <input type="number" class="form-control" id="userSubscriptionDuration" value="30" min="1" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="userSubscriptionStart" class="form-label">تاريخ بدء الاشتراك</label>
+                            <input type="date" class="form-control" id="userSubscriptionStart">
+                        </div>
+                        
+                        <div class="card mb-3">
+                            <div class="card-header">
+                                <h6 class="card-title mb-0">مميزات الخطة المحددة</h6>
+                            </div>
+                            <div class="card-body" id="subscriptionFeatures">
+                                <!-- سيتم تعبئتها ديناميكياً -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="button" class="btn btn-primary" id="saveUserBtn">حفظ العميل</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مكتبات JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ==================== تهيئة Firebase ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwefVPKU85AHzA0LU4xav23vI0zwNjdnc",
+            authDomain: "erp-m-caaf4.firebaseapp.com",
+            projectId: "erp-m-caaf4",
+            storageBucket: "erp-m-caaf4.firebasestorage.app",
+            messagingSenderId: "149444197418",
+            appId: "1:149444197418:web:a170ad50d3760f9192d753"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ==================== المتغيرات العامة ====================
+        let currentUser = null;
+        let users = [];
+        let subscriptionPlans = {};
+
+        // ==================== خطط الاشتراك ====================
+        const SUBSCRIPTION_PLANS = {
+            trial: {
+                name: "تجريبي",
+                price: 0,
+                duration: 7,
+                maxUsers: 1,
+                maxProducts: 50,
+                storage: 100, // MB
+                features: {
+                    advancedReports: false,
+                    apiAccess: false,
+                    dataExport: false,
+                    customBranding: false
+                }
+            },
+            basic: {
+                name: "أساسي",
+                price: 50,
+                duration: 30,
+                maxUsers: 2,
+                maxProducts: 200,
+                storage: 500, // MB
+                features: {
+                    advancedReports: true,
+                    apiAccess: false,
+                    dataExport: true,
+                    customBranding: false
+                }
+            },
+            professional: {
+                name: "محترف",
+                price: 100,
+                duration: 90,
+                maxUsers: 5,
+                maxProducts: 1000,
+                storage: 2000, // MB
+                features: {
+                    advancedReports: true,
+                    apiAccess: true,
+                    dataExport: true,
+                    customBranding: false
+                }
+            },
+            enterprise: {
+                name: "متقدم",
+                price: 200,
+                duration: 365,
+                maxUsers: 50,
+                maxProducts: 5000,
+                storage: 10000, // MB
+                features: {
+                    advancedReports: true,
+                    apiAccess: true,
+                    dataExport: true,
+                    customBranding: true
+                }
+            },
+            owner: {
+                name: "مالك النظام",
+                price: 0,
+                duration: 9999,
+                maxUsers: 100,
+                maxProducts: 10000,
+                storage: 50000, // MB
+                features: {
+                    advancedReports: true,
+                    apiAccess: true,
+                    dataExport: true,
+                    customBranding: true
+                }
+            }
+        };
+
+        // ==================== فئة مدير الاشتراكات ====================
+        class OwnerSubscriptionManager {
+            /**
+             * التحقق من حالة اشتراك المستخدم
+             */
+            async checkSubscriptionStatus(userId) {
+                try {
+                    const userDoc = await db.collection('users').doc(userId).get();
+                    if (!userDoc.exists) return false;
+
+                    const userData = userDoc.data();
+                    
+                    // المالك دائماً لديه اشتراك صالح
+                    if (userData.role === 'owner') {
+                        return true;
+                    }
+
+                    // التحقق من وجود اشتراك
+                    if (!userData.subscription || userData.subscription.status !== 'active') {
+                        return false;
+                    }
+
+                    // التحقق من تاريخ الانتهاء
+                    const now = new Date();
+                    const expiryDate = userData.subscription.expiryDate.toDate();
+                    
+                    if (expiryDate < now) {
+                        // تحديث حالة الاشتراك إلى منتهي
+                        await db.collection('users').doc(userId).update({
+                            'subscription.status': 'expired'
+                        });
+                        return false;
+                    }
+
+                    return true;
+                } catch (error) {
+                    console.error('❌ خطأ في التحقق من حالة الاشتراك:', error);
+                    return false;
+                }
+            }
+
+
+
+
+            /**
+             * منح أو تحديث اشتراك للمستخدم
+             */
+            async grantSubscription(userId, planType, durationDays, startDate = null) {
+                try {
+                    const plan = SUBSCRIPTION_PLANS[planType];
+                    if (!plan) {
+                        throw new Error('خطة الاشتراك غير صالحة');
+                    }
+
+                    const start = startDate ? new Date(startDate) : new Date();
+                    const expiryDate = new Date(start);
+                    expiryDate.setDate(expiryDate.getDate() + durationDays);
+
+                    const subscriptionData = {
+                        plan: planType,
+                        status: 'active',
+                        startDate: firebase.firestore.Timestamp.fromDate(start),
+                        expiryDate: firebase.firestore.Timestamp.fromDate(expiryDate),
+                        features: plan.features,
+                        price: plan.price
+                    };
+
+                    await db.collection('users').doc(userId).update({
+                        subscription: subscriptionData
+                    });
+
+                    // إرسال إشعار للمستخدم
+                    await this.sendSubscriptionNotification(userId, 'activated', {
+                        plan: plan.name,
+                        expiryDate: expiryDate.toLocaleDateString('ar-YE')
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error('❌ خطأ في منح الاشتراك:', error);
+                    throw error;
+                }
+            }
+
+            /**
+             * تجديد اشتراك المستخدم
+             */
+            async renewSubscription(userId, additionalDays) {
+                try {
+                    const userDoc = await db.collection('users').doc(userId).get();
+                    if (!userDoc.exists) {
+                        throw new Error('المستخدم غير موجود');
+                    }
+
+                    const userData = userDoc.data();
+                    const currentExpiry = userData.subscription.expiryDate.toDate();
+                    const newExpiryDate = new Date(currentExpiry);
+                    newExpiryDate.setDate(newExpiryDate.getDate() + additionalDays);
+
+                    await db.collection('users').doc(userId).update({
+                        'subscription.expiryDate': firebase.firestore.Timestamp.fromDate(newExpiryDate),
+                        'subscription.status': 'active'
+                    });
+
+                    // إرسال إشعار التجديد
+                    await this.sendSubscriptionNotification(userId, 'renewed', {
+                        additionalDays: additionalDays,
+                        newExpiryDate: newExpiryDate.toLocaleDateString('ar-YE')
+                    });
+
+                    return true;
+                } catch (error) {
+                    console.error('❌ خطأ في تجديد الاشتراك:', error);
+                    throw error;
+                }
+            }
+
+            /**
+             * إرسال إشعار اشتراك
+             */
+            async sendSubscriptionNotification(userId, type, data) {
+                try {
+                    const notification = {
+                        userId: userId,
+                        type: type,
+                        data: data,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                        read: false
+                    };
+
+                    await db.collection('notifications').add(notification);
+                    console.log(`✅ تم إرسال إشعار ${type} للمستخدم ${userId}`);
+                } catch (error) {
+                    console.error('❌ خطأ في إرسال الإشعار:', error);
+                }
+            }
+
+            /**
+             * التحقق من الاشتراكات المنتهية وإرسال تنبيهات
+             */
+            async checkExpiringSubscriptions() {
+                try {
+                    const now = new Date();
+                    const warningDate = new Date();
+                    warningDate.setDate(warningDate.getDate() + 7);
+
+                    const usersSnapshot = await db.collection('users')
+                        .where('subscription.status', '==', 'active')
+                        .get();
+
+                    let expiredCount = 0;
+                    let expiringCount = 0;
+
+                    usersSnapshot.forEach(doc => {
+                        const userData = doc.data();
+                        const expiryDate = userData.subscription.expiryDate.toDate();
+
+                        if (expiryDate < now) {
+                            // انتهى الاشتراك
+                            this.expireSubscription(doc.id);
+                            expiredCount++;
+                        } else if (expiryDate <= warningDate) {
+                            // سينتهي خلال 7 أيام
+                            this.sendRenewalReminder(doc.id, userData, expiryDate);
+                            expiringCount++;
+                        }
+                    });
+
+                    console.log(`✅ تم التحقق من الاشتراكات: ${expiredCount} منتهية، ${expiringCount} ستنتهي قريباً`);
+                    return { expired: expiredCount, expiring: expiringCount };
+                } catch (error) {
+                    console.error('❌ خطأ في التحقق من الاشتراكات:', error);
+                }
+            }
+
+            /**
+             * انتهاء الاشتراك
+             */
+            async expireSubscription(userId) {
+                try {
+                    await db.collection('users').doc(userId).update({
+                        'subscription.status': 'expired'
+                    });
+
+                    await this.sendSubscriptionNotification(userId, 'expired', {});
+                    console.log(`✅ تم تعيين اشتراك المستخدم ${userId} كمنتهي`);
+                } catch (error) {
+                    console.error('❌ خطأ في تعيين انتهاء الاشتراك:', error);
+                }
+            }
+
+            /**
+             * إرسال تذكير بالتجديد
+             */
+            async sendRenewalReminder(userId, userData, expiryDate) {
+                try {
+                    const daysLeft = Math.ceil((expiryDate - new Date()) / (1000 * 60 * 60 * 24));
+                    
+                    await this.sendSubscriptionNotification(userId, 'reminder', {
+                        daysLeft: daysLeft,
+                        expiryDate: expiryDate.toLocaleDateString('ar-YE')
+                    });
+
+                    console.log(`✅ تم إرسال تذكير تجديد للمستخدم ${userId} (${daysLeft} يوم متبقي)`);
+                } catch (error) {
+                    console.error('❌ خطأ في إرسال تذكير التجديد:', error);
+                }
+            }
+
+            /**
+             * تحميل خطط الاشتراك وعرضها
+             */
+            loadSubscriptionPlans() {
+                const container = document.getElementById('subscriptionPlansContainer');
+                if (!container) return;
+
+                container.innerHTML = '';
+
+                Object.entries(SUBSCRIPTION_PLANS).forEach(([key, plan]) => {
+                    // تخطي خطة المالك في العرض
+                    if (key === 'owner') return;
+
+                    const isPopular = key === 'professional'; // تحديد الخطة الأكثر شيوعاً
+
+                    const planCard = document.createElement('div');
+                    planCard.className = `col-md-3 mb-4`;
+                    planCard.innerHTML = `
+                        <div class="plan-card ${isPopular ? 'popular' : ''}">
+                            <div class="text-center mb-3">
+                                <h5 class="card-title">${plan.name}</h5>
+                                <div class="price">
+                                    <span class="h3 text-primary">${plan.price}</span>
+                                    <span class="text-muted"> ر.ي</span>
+                                </div>
+                                <small class="text-muted">${plan.duration} يوم</small>
+                            </div>
+                            
+                            <ul class="feature-list">
+                                <li><i class="bi bi-people me-2"></i> ${plan.maxUsers} مستخدم</li>
+                                <li><i class="bi bi-box me-2"></i> ${plan.maxProducts} منتج</li>
+                                <li><i class="bi bi-hdd me-2"></i> ${plan.storage} ميجابايت</li>
+                                <li>
+                                    ${plan.features.advancedReports ? 
+                                        '<i class="bi bi-check-lg me-2"></i>' : 
+                                        '<i class="bi bi-x-lg me-2"></i>'} 
+                                    تقارير متقدمة
+                                </li>
+                                <li>
+                                    ${plan.features.apiAccess ? 
+                                        '<i class="bi bi-check-lg me-2"></i>' : 
+                                        '<i class="bi bi-x-lg me-2"></i>'} 
+                                    واجهة برمجة
+                                </li>
+                                <li>
+                                    ${plan.features.dataExport ? 
+                                        '<i class="bi bi-check-lg me-2"></i>' : 
+                                        '<i class="bi bi-x-lg me-2"></i>'} 
+                                    تصدير البيانات
+                                </li>
+                                ${plan.features.customBranding ? `
+                                <li>
+                                    <i class="bi bi-check-lg me-2"></i>
+                                    علامة تجارية مخصصة
+                                </li>
+                                ` : ''}
+                            </ul>
+                            
+                            <div class="text-center mt-3">
+                                <small class="text-muted">${plan.price === 0 ? 'مجاني' : 'مدفوع'}</small>
+                            </div>
+                        </div>
+                    `;
+
+                    container.appendChild(planCard);
+                });
+            }
+
+            /**
+             * تحديث عرض مميزات الاشتراك في النموذج
+             */
+            updateSubscriptionFeaturesDisplay(planType) {
+                const featuresContainer = document.getElementById('subscriptionFeatures');
+                if (!featuresContainer) return;
+
+                const plan = SUBSCRIPTION_PLANS[planType];
+                if (!plan) {
+                    featuresContainer.innerHTML = '<p class="text-muted">اختر خطة اشتراك لعرض المميزات</p>';
+                    return;
+                }
+
+                featuresContainer.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><i class="bi bi-people me-2"></i> <strong>عدد المستخدمين:</strong> ${plan.maxUsers}</p>
+                            <p><i class="bi bi-box me-2"></i> <strong>المنتجات:</strong> ${plan.maxProducts}</p>
+                            <p><i class="bi bi-hdd me-2"></i> <strong>مساحة التخزين:</strong> ${plan.storage} ميجابايت</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <i class="bi ${plan.features.advancedReports ? 'bi-check-lg text-success' : 'bi-x-lg text-danger'} me-2"></i>
+                                <strong>تقارير متقدمة:</strong> ${plan.features.advancedReports ? 'متاح' : 'غير متاح'}
+                            </p>
+                            <p>
+                                <i class="bi ${plan.features.apiAccess ? 'bi-check-lg text-success' : 'bi-x-lg text-danger'} me-2"></i>
+                                <strong>واجهة برمجة:</strong> ${plan.features.apiAccess ? 'متاح' : 'غير متاح'}
+                            </p>
+                            <p>
+                                <i class="bi ${plan.features.dataExport ? 'bi-check-lg text-success' : 'bi-x-lg text-danger'} me-2"></i>
+                                <strong>تصدير البيانات:</strong> ${plan.features.dataExport ? 'متاح' : 'غير متاح'}
+                            </p>
+                            ${plan.features.customBranding ? `
+                            <p>
+                                <i class="bi bi-check-lg text-success me-2"></i>
+                                <strong>علامة تجارية مخصصة:</strong> متاح
+                            </p>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // إنشاء مثيل من مدير الاشتراكات
+        const subscriptionManager = new OwnerSubscriptionManager();
+
+        // ==================== إدارة الواجهة والتحكم ====================
+        /**
+         * تبديل النمط بين الفاتح والداكن
+         */
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-bs-theme', newTheme);
+            document.getElementById('themeIcon').className = newTheme === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+            localStorage.setItem('theme', newTheme);
+        }
+
+        /**
+         * عرض شاشة تسجيل الدخول
+         */
+        function showLoginScreen() {
+            document.getElementById('loginScreen').classList.remove('d-none');
+            document.getElementById('ownerDashboard').classList.add('d-none');
+        }
+
+        /**
+         * عرض لوحة التحكم
+         */
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('d-none');
+            document.getElementById('ownerDashboard').classList.remove('d-none');
+            loadDashboardData();
+        }
+
+        /**
+         * تحميل بيانات لوحة التحكم
+         */
+        async function loadDashboardData() {
+            try {
+                await Promise.all([
+                    loadUsers(),
+                    subscriptionManager.checkExpiringSubscriptions(),
+                    updateKPICards()
+                ]);
+                
+                subscriptionManager.loadSubscriptionPlans();
+                console.log('✅ تم تحميل بيانات لوحة التحكم');
+            } catch (error) {
+                console.error('❌ فشل تحميل بيانات لوحة التحكم:', error);
+            }
+        }
+
+        /**
+         * تحديث بطاقات الإحصائيات
+         */
+        async function updateKPICards() {
+            try {
+                // إجمالي العملاء
+                const totalUsers = users.filter(user => user.role === 'user').length;
+                document.getElementById('totalUsers').textContent = totalUsers;
+
+                // الاشتراكات النشطة
+                const activeSubscriptions = users.filter(user => 
+                    user.role === 'user' && 
+                    user.subscription && 
+                    user.subscription.status === 'active'
+                ).length;
+                document.getElementById('activeSubscriptions').textContent = activeSubscriptions;
+
+                // الاشتراكات المنتهية قريباً
+                const now = new Date();
+                const warningDate = new Date();
+                warningDate.setDate(warningDate.getDate() + 7);
+                
+                const expiringSubscriptions = users.filter(user => {
+                    if (user.role !== 'user' || !user.subscription || user.subscription.status !== 'active') {
+                        return false;
+                    }
+                    
+                    const expiryDate = user.subscription.expiryDate.toDate();
+                    return expiryDate <= warningDate && expiryDate > now;
+                }).length;
+                
+                document.getElementById('expiringSubscriptions').textContent = expiringSubscriptions;
+
+                // إجمالي الإيرادات
+                const totalRevenue = users.reduce((total, user) => {
+                    if (user.role === 'user' && user.subscription) {
+                        return total + (user.subscription.price || 0);
+                    }
+                    return total;
+                }, 0);
+                
+                document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2);
+
+            } catch (error) {
+                console.error('❌ فشل تحديث بطاقات الإحصائيات:', error);
+            }
+        }
+
+        // ==================== نظام الترخيص للعملاء ====================
+
+        /**
+        * إنشاء ترخيص جديد للعميل
+        */
+        async function generateCustomerLicense(customerId, planType, durationMonths = 1) {
+            try {
+                const licenseKey = 'ERP-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+                const startDate = new Date();
+                const expiryDate = new Date();
+                expiryDate.setMonth(expiryDate.getMonth() + durationMonths);
+                
+                const licenseData = {
+                    key: licenseKey,
+                    customerId: customerId,
+                    plan: planType,
+                    startDate: startDate.toISOString(),
+                    expiryDate: expiryDate.toISOString(),
+                    status: 'active',
+                    generatedAt: new Date().toISOString()
+                };
+                
+                // حفظ في قاعدة البيانات
+                await db.collection('licenses').doc(licenseKey).set(licenseData);
+                
+                console.log('✅ تم إنشاء الترخيص:', licenseKey);
+                return licenseKey;
+                
+            } catch (error) {
+                console.error('❌ فشل إنشاء الترخيص:', error);
+                throw error;
+            }
+        }
+
+        /**
+        * تحديث واجهة إدارة التراخيص
+        */
+        function addLicenseManagementToCustomerModal() {
+            // هذا سيعمل عند فتح نموذج العميل
+            const customerForm = document.getElementById('customerForm');
+            if (customerForm) {
+                // إضافة قسم التراخيص
+                const licenseSection = `
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">🗝️ إدارة التراخيص</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">مدة الترخيص</label>
+                                    <select class="form-select" id="licenseDuration">
+                                        <option value="1">شهر واحد</option>
+                                        <option value="3">3 أشهر</option>
+                                        <option value="6">6 أشهر</option>
+                                        <option value="12">سنة واحدة</option>
+                                        <option value="24">سنتين</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">نظام التشغيل</label>
+                                    <select class="form-select" id="licensePlatform">
+                                        <option value="windows">Windows</option>
+                                        <option value="macos">MacOS</option>
+                                        <option value="linux">Linux</option>
+                                        <option value="web">Web</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="customerLicensesList"></div>
+                            <button type="button" class="btn btn-success w-100" onclick="generateNewLicense()">
+                                <i class="bi bi-key"></i> إنشاء ترخيص جديد
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                customerForm.insertAdjacentHTML('beforeend', licenseSection);
+            }
+        }
+
+        /**
+        * إنشاء ترخيص جديد
+        */
+        async function generateNewLicense() {
+            const customerId = document.getElementById('customerId').value;
+            const duration = parseInt(document.getElementById('licenseDuration').value);
+            const platform = document.getElementById('licensePlatform').value;
+            
+            if (!customerId) {
+                alert('❌ يرجى حفظ بيانات العميل أولاً');
+                return;
+            }
+            
+            try {
+                const customer = await getCustomerById(parseInt(customerId));
+                const licenseKey = await generateCustomerLicense(customerId, customer.subscription?.plan || 'basic', duration);
+                
+                // عرض الترخيص للمستخدم
+                showLicenseKey(licenseKey, customer, duration, platform);
+                
+            } catch (error) {
+                alert('❌ فشل إنشاء الترخيص: ' + error.message);
+            }
+        }
+
+        /**
+        * عرض مفتاح الترخيص للمستخدم
+        */
+        function showLicenseKey(licenseKey, customer, duration, platform) {
+            const licenseHTML = `
+                <div class="alert alert-success mt-3">
+                    <h6>✅ تم إنشاء الترخيص بنجاح</h6>
+                    <p><strong>العميل:</strong> ${customer.name}</p>
+                    <p><strong>مفتاح الترخيص:</strong> <code>${licenseKey}</code></p>
+                    <p><strong>المدة:</strong> ${duration} شهر</p>
+                    <p><strong>النظام:</strong> ${platform}</p>
+                    <p class="text-muted small">يرجى إعطاء هذا المفتاح للعميل لتفعيل النظام.</p>
+                    <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('${licenseKey}')">
+                        <i class="bi bi-clipboard"></i> نسخ المفتاح
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('customerLicensesList').innerHTML = licenseHTML;
+        }
+
+        /**
+        * نسخ النص للحافظة
+        */
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✅ تم نسخ المفتاح إلى الحافظة');
+            });
+        }
+
+        /**
+         * تحميل بيانات العملاء
+         */
+        async function loadUsers() {
+            try {
+                const usersSnapshot = await db.collection('users').get();
+                users = [];
+                
+                usersSnapshot.forEach(doc => {
+                    const userData = doc.data();
+                    users.push({
+                        id: doc.id,
+                        ...userData
+                    });
+                });
+
+                renderUsersTable();
+                return users;
+            } catch (error) {
+                console.error('❌ فشل تحميل بيانات العملاء:', error);
+                return [];
+            }
+        }
+
+        /**
+         * عرض بيانات العملاء في الجدول
+         */
+        function renderUsersTable() {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            لا توجد عملاء مسجلين بعد
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // تصفية العملاء فقط (استبعاد المالك)
+            const customers = users.filter(user => user.role === 'user');
+
+            customers.forEach(user => {
+                const now = new Date();
+                const expiryDate = user.subscription ? user.subscription.expiryDate.toDate() : null;
+                const daysLeft = expiryDate ? Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24)) : 0;
+                
+                let statusClass = '';
+                let statusText = '';
+                let statusIndicator = '';
+                
+                if (!user.subscription || user.subscription.status === 'inactive') {
+                    statusClass = '';
+                    statusText = 'غير نشط';
+                    statusIndicator = '<span class="status-indicator status-inactive"></span>';
+                } else if (user.subscription.status === 'active') {
+                    if (daysLeft <= 7 && daysLeft > 0) {
+                        statusClass = 'subscription-warning';
+                        statusText = `ينتهي قريباً (${daysLeft} يوم)`;
+                        statusIndicator = '<span class="status-indicator status-warning"></span>';
+                    } else if (daysLeft <= 0) {
+                        statusClass = 'subscription-expired';
+                        statusText = 'منتهي';
+                        statusIndicator = '<span class="status-indicator status-expired"></span>';
+                    } else {
+                        statusClass = 'subscription-active';
+                        statusText = 'نشط';
+                        statusIndicator = '<span class="status-indicator status-active"></span>';
+                    }
+                } else if (user.subscription.status === 'expired') {
+                    statusClass = 'subscription-expired';
+                    statusText = 'منتهي';
+                    statusIndicator = '<span class="status-indicator status-expired"></span>';
+                } else if (user.subscription.status === 'suspended') {
+                    statusClass = '';
+                    statusText = 'موقوف';
+                    statusIndicator = '<span class="status-indicator status-inactive"></span>';
+                }
+
+                const row = document.createElement('tr');
+                row.className = statusClass;
+                row.innerHTML = `
+                    <td>${user.fullName || 'غير معروف'}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        <span class="badge bg-primary badge-subscription">
+                            ${user.subscription ? SUBSCRIPTION_PLANS[user.subscription.plan]?.name || user.subscription.plan : 'لا يوجد'}
+                        </span>
+                    </td>
+                    <td>${user.createdAt ? user.createdAt.toDate().toLocaleDateString('ar-YE') : 'غير معروف'}</td>
+                    <td>
+                        ${statusIndicator}
+                        ${statusText}
+                    </td>
+                    <td>${expiryDate ? expiryDate.toLocaleDateString('ar-YE') : 'لا يوجد'}</td>
+                    <td>
+                        <span class="${daysLeft <= 7 ? 'text-warning fw-bold' : ''}">
+                            ${expiryDate ? (daysLeft > 0 ? daysLeft + ' يوم' : 'انتهى') : 'لا يوجد'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary edit-user-btn me-1" data-user-id="${user.id}">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger delete-user-btn" data-user-id="${user.id}">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            // إضافة مستمعات الأحداث للأزرار
+            document.querySelectorAll('.edit-user-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-user-id');
+                    openUserModal(userId);
+                });
+            });
+
+            document.querySelectorAll('.delete-user-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const userId = this.getAttribute('data-user-id');
+                    deleteUser(userId);
+                });
+            });
+        }
+
+        /**
+         * فتح نموذج إضافة/تعديل عميل
+         */
+        function openUserModal(userId = null) {
+            const modal = new bootstrap.Modal(document.getElementById('userModal'));
+            const form = document.getElementById('userForm');
+            
+            if (userId) {
+                // وضع التعديل
+                document.getElementById('userModalLabel').textContent = 'تعديل العميل';
+                document.getElementById('userId').value = userId;
+                
+                const user = users.find(u => u.id === userId);
+                if (user) {
+                    document.getElementById('userFullName').value = user.fullName || '';
+                    document.getElementById('userEmail').value = user.email || '';
+                    document.getElementById('userPassword').value = '';
+                    document.getElementById('userSubscriptionPlan').value = user.subscription?.plan || '';
+                    document.getElementById('userSubscriptionStatus').value = user.subscription?.status || 'active';
+                    document.getElementById('userSubscriptionDuration').value = user.subscription ? 
+                        Math.ceil((user.subscription.expiryDate.toDate() - user.subscription.startDate.toDate()) / (1000 * 60 * 60 * 24)) : 30;
+                    document.getElementById('userSubscriptionStart').value = user.subscription ? 
+                        user.subscription.startDate.toDate().toISOString().split('T')[0] : '';
+                    
+                    // تحديث عرض المميزات
+                    subscriptionManager.updateSubscriptionFeaturesDisplay(user.subscription?.plan || '');
+                }
+            } else {
+                // وضع الإضافة
+                document.getElementById('userModalLabel').textContent = 'إضافة عميل جديد';
+                form.reset();
+                document.getElementById('userId').value = '';
+                subscriptionManager.updateSubscriptionFeaturesDisplay('');
+            }
+            
+            modal.show();
+        }
+
+        /**
+         * حفظ العميل
+         */
+        async function saveUser() {
+            const form = document.getElementById('userForm');
+            const userId = document.getElementById('userId').value;
+            const isEdit = !!userId;
+            
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const userData = {
+                fullName: document.getElementById('userFullName').value,
+                email: document.getElementById('userEmail').value,
+                role: 'user',
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const subscriptionPlan = document.getElementById('userSubscriptionPlan').value;
+            const subscriptionStatus = document.getElementById('userSubscriptionStatus').value;
+            const subscriptionDuration = parseInt(document.getElementById('userSubscriptionDuration').value);
+            const subscriptionStart = document.getElementById('userSubscriptionStart').value;
+
+            try {
+                if (isEdit) {
+                    // تحديث المستخدم الحالي
+                    const password = document.getElementById('userPassword').value;
+                    if (password) {
+                        // TODO: تحديث كلمة المرور - يتطلب إعادة المصادقة
+                        console.log('تحديث كلمة المرور غير مدعوم في هذا الإصدار');
+                    }
+
+                    await db.collection('users').doc(userId).update(userData);
+                    
+                    // تحديث الاشتراك
+                    if (subscriptionPlan) {
+                        await subscriptionManager.grantSubscription(
+                            userId, 
+                            subscriptionPlan, 
+                            subscriptionDuration, 
+                            subscriptionStart || null
+                        );
+                    }
+
+                    alert('✅ تم تحديث العميل بنجاح!');
+                } else {
+                    // إنشاء مستخدم جديد
+                    const password = document.getElementById('userPassword').value;
+                    if (!password) {
+                        alert('❌ يرجى إدخال كلمة مرور للمستخدم الجديد');
+                        return;
+                    }
+
+                    // إنشاء مستخدم في Firebase Auth
+                    const userCredential = await auth.createUserWithEmailAndPassword(
+                        userData.email, 
+                        password
+                    );
+
+                    const newUserId = userCredential.user.uid;
+
+                    // إضافة بيانات إضافية في Firestore
+                    await db.collection('users').doc(newUserId).set({
+                        ...userData,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // منح الاشتراك
+                    if (subscriptionPlan) {
+                        await subscriptionManager.grantSubscription(
+                            newUserId, 
+                            subscriptionPlan, 
+                            subscriptionDuration, 
+                            subscriptionStart || null
+                        );
+                    }
+
+                    alert('✅ تم إنشاء العميل بنجاح!');
+                }
+
+                // إعادة تحميل البيانات وإغلاق النموذج
+                const modal = bootstrap.Modal.getInstance(document.getElementById('userModal'));
+                modal.hide();
+                loadDashboardData();
+
+            } catch (error) {
+                console.error('❌ فشل حفظ العميل:', error);
+                alert(`❌ فشل حفظ العميل: ${error.message}`);
+            }
+        }
+
+        /**
+         * حذف العميل
+         */
+        async function deleteUser(userId) {
+            if (!confirm('هل أنت متأكد من حذف هذا العميل؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                return;
+            }
+
+            try {
+                // حذف من Firebase Auth (يتطلب صلاحيات إدارية)
+                // TODO: تنفيذ حذف المستخدم من Firebase Auth
+                
+                // حذف من Firestore
+                await db.collection('users').doc(userId).delete();
+                
+                alert('✅ تم حذف العميل بنجاح!');
+                loadDashboardData();
+            } catch (error) {
+                console.error('❌ فشل حذف العميل:', error);
+                alert(`❌ فشل حذف العميل: ${error.message}`);
+            }
+        }
+
+        /**
+         * تسجيل الدخول
+         */
+        async function login(email, password) {
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // التحقق من دور المستخدم
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    throw new Error('المستخدم غير موجود في النظام');
+                }
+                
+                const userData = userDoc.data();
+                if (userData.role !== 'owner') {
+                    await auth.signOut();
+                    throw new Error('ليس لديك صلاحية الوصول إلى لوحة تحكم المالك');
+                }
+                
+                currentUser = { ...user, ...userData };
+                showDashboard();
+                updateUserDisplay();
+                
+            } catch (error) {
+                console.error('❌ فشل تسجيل الدخول:', error);
+                document.getElementById('loginMessage').textContent = error.message;
+                document.getElementById('loginMessage').style.display = 'block';
+            }
+        }
+
+        /**
+         * تسجيل الخروج
+         */
+        async function logout() {
+            try {
+                await auth.signOut();
+                currentUser = null;
+                showLoginScreen();
+            } catch (error) {
+                console.error('❌ فشل تسجيل الخروج:', error);
+            }
+        }
+
+        /**
+         * تحديث عرض بيانات المستخدم
+         */
+        function updateUserDisplay() {
+            if (!currentUser) return;
+            
+            const displayName = currentUser.fullName || currentUser.email;
+            document.getElementById('userDisplayName').textContent = displayName;
+            
+            // إنشاء الأحرف الأولى للصورة الرمزية
+            const avatar = document.getElementById('userAvatar');
+            if (avatar && displayName) {
+                const initials = displayName.split(' ').map(n => n[0]).join('').toUpperCase();
+                avatar.textContent = initials.substring(0, 2);
+            }
+        }
+
+        // ==================== تهيئة التطبيق ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // استعادة النمط المحفوظ
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            document.getElementById('themeIcon').className = savedTheme === 'dark' ? 'bi bi-moon' : 'bi bi-sun';
+            
+            // إعداد مستمعات الأحداث
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+                login(email, password);
+            });
+            
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('refreshSubscriptionsBtn').addEventListener('click', loadDashboardData);
+            document.getElementById('addUserBtn').addEventListener('click', () => openUserModal());
+            document.getElementById('saveUserBtn').addEventListener('click', saveUser);
+            
+            document.getElementById('userSubscriptionPlan').addEventListener('change', function() {
+                subscriptionManager.updateSubscriptionFeaturesDisplay(this.value);
+            });
+            
+            document.getElementById('exportUsersBtn').addEventListener('click', function() {
+                alert('سيتم تنزيل ملف Excel يحتوي على بيانات العملاء');
+                // TODO: تنفيذ تصدير البيانات إلى Excel
+            });
+
+            // التحقق من حالة تسجيل الدخول عند التحميل
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) {
+                            const userData = userDoc.data();
+                            if (userData.role === 'owner') {
+                                currentUser = { ...user, ...userData };
+                                showDashboard();
+                                updateUserDisplay();
+                                return;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('❌ خطأ في التحقق من صلاحيات المستخدم:', error);
+                    }
+                    
+                    // إذا لم يكن المستخدم مالكاً، قم بتسجيل الخروج
+                    await auth.signOut();
+                    showLoginScreen();
+                } else {
+                    showLoginScreen();
+                }
+            });
+        });
+
+// sw.js - Service Worker لنظام Micro-ERP
+const CACHE_NAME = 'erp-system-v1.3';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/owner.html',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
+  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js',
+  'https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js',
+  'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js'
+];
+
+// تثبيت Service Worker
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(function(cache) {
+        console.log('✅ تم فتح الذاكرة المؤقتة');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+// تفعيل Service Worker
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.map(function(cacheName) {
+          if (cacheName !== CACHE_NAME) {
+            console.log('🗑️ حذف الذاكرة المؤقتة القديمة:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// اعتراض الطلبات
+self.addEventListener('fetch', function(event) {
+  // استبعاد طلبات Firebase وطلبات POST
+  if (event.request.url.includes('firebase') || event.request.method === 'POST') {
+    return fetch(event.request);
+  }
+
+  event.respondWith(
+    caches.match(event.request)
+      .then(function(response) {
+        // إرجاع المورد من الذاكرة المؤقتة إذا وجد
+        if (response) {
+          return response;
+        }
+
+        // استنساخ الطلب لأنه يمكن استخدامه مرة واحدة فقط
+        const fetchRequest = event.request.clone();
+
+        return fetch(fetchRequest).then(
+          function(response) {
+            // التحقق من أن الاستجابة صالحة
+            if(!response || response.status !== 200 || response.type !== 'basic') {
+              return response;
+            }
+
+            // استنساخ الاستجابة لأنها يمكن استخدامها مرة واحدة فقط
+            const responseToCache = response.clone();
+
+            caches.open(CACHE_NAME)
+              .then(function(cache) {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        ).catch(function() {
+          // السقوط إلى صفحة بديلة في حالة عدم الاتصال
+          if (event.request.destination === 'document') {
+            return caches.match('/index.html');
+          }
+        });
+      }
+    )
+  );
+});
+
+// معالجة رسائل التحديث
+self.addEventListener('message', function(event) {
+  if (event.data.action === 'skipWaiting') {
+    self.skipWaiting();
+  }
+});
+
+    </script>
+</body>
+</html>
